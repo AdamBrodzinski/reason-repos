@@ -1,0 +1,27 @@
+.RepoItem {
+  border-bottom: 1px solid #dadada;
+  padding: 17px 16px 13px;
+}
+
+.RepoItem:first-of-type {
+  border-top: 1px solid #dadada;
+}
+
+.RepoItem:last-of-type {
+  border-bottom: none;
+}
+
+.RepoItem a {
+  display: block;
+  text-decoration: none;
+  color: black;
+}
+
+.RepoItem h2 {
+  color: #414150;
+  margin: 0 0 3px 0;
+}
+
+.RepoItem .star-count {
+  color: gray;
+}

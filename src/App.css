@@ -1,0 +1,13 @@
+.App {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0px 0px 2px #0000004f;
+  padding: 5px;
+  padding-right: 0;
+}
+
+.App h1 {
+  color: navy;
+  text-align: center;
+}
