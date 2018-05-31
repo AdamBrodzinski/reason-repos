@@ -1,4 +1,5 @@
 [%bs.raw {| import('./App.css') |}];
+open Js.Promise;
 
 let text = ReasonReact.string;
 
@@ -12,9 +13,13 @@ let make = _children => {
   initialState: () => {data: None},
   didMount: self => {
     RepoData.getRepos()
-    |> Js.Promise.then_(repoData => {
+    |> then_(repoData => {
          self.send(Loaded(repoData));
-         Js.Promise.resolve();
+         resolve();
+       })
+    |> catch(_err => {
+         [%bs.raw {| alert("Error loading repos") |}] |> ignore;
+         resolve();
        })
     |> ignore;
     ();
