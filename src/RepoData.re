@@ -4,10 +4,23 @@ type repo = {
   url: string,
 };
 
-let getRepos = () : array(repo) => {
-  Js.log("fetching");
-  [|
-    {full_name: "facebook/reason", stargazers_count: 5742, url: "foo"},
-    {full_name: "jaredpalmer/razzle", stargazers_count: 4029, url: "foo"},
-  |];
-};
+let repoUrl = "https://api.github.com/search/repositories?q=topic%3Areasonml&type=Repositories";
+
+let parseRepoItems = (json: Js.Json.t) : repo =>
+  Json.Decode.{
+    full_name: field("full_name", string, json),
+    stargazers_count: field("stargazers_count", int, json),
+    url: field("html_url", string, json),
+  };
+
+let parseGetResponse = json =>
+  Json.Decode.field("items", Json.Decode.array(parseRepoItems), json);
+
+let getRepos = () =>
+  Js.Promise.(
+    Fetch.fetch(repoUrl)
+    |> then_(Fetch.Response.text)
+    |> then_(jsonText =>
+         parseGetResponse(Js.Json.parseExn(jsonText)) |> resolve
+       )
+  );

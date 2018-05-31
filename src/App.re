@@ -9,18 +9,16 @@ type state = {data: option(array(RepoData.repo))};
 
 let make = _children => {
   ...ReasonReact.reducerComponent("App"),
+  initialState: () => {data: None},
   didMount: self => {
-    let _ =
-      Js.Global.setTimeout(
-        () => {
-          let repos = RepoData.getRepos();
-          self.send(Loaded(repos));
-        },
-        900,
-      );
+    RepoData.getRepos()
+    |> Js.Promise.then_(repoData => {
+         self.send(Loaded(repoData));
+         Js.Promise.resolve();
+       })
+    |> ignore;
     ();
   },
-  initialState: () => {data: None},
   reducer: (action, _state) =>
     switch (action) {
     | Loaded(repos) => ReasonReact.Update({data: Some(repos)})
@@ -30,11 +28,11 @@ let make = _children => {
       <h1> (text("Reason Project")) </h1>
       (
         switch (self.state.data) {
-        | Some(mrepos) =>
+        | Some(repos) =>
           ReasonReact.array(
             Array.mapi(
               (i, repo) => <RepoItem key=(string_of_int(i)) repo />,
-              mrepos,
+              repos,
             ),
           )
         | None => <div className="loading"> (text("Loading...")) </div>
