@@ -2,11 +2,6 @@
 
 let text = ReasonReact.string;
 
-let repos: array(RepoData.repo) = [|
-  {full_name: "facebook/reason", stargazers_count: 5742, url: "foo"},
-  {full_name: "jaredpalmer/razzle", stargazers_count: 4029, url: "foo"},
-|];
-
 type action =
   | Loaded(array(RepoData.repo));
 
@@ -14,6 +9,17 @@ type state = {data: option(array(RepoData.repo))};
 
 let make = _children => {
   ...ReasonReact.reducerComponent("App"),
+  didMount: self => {
+    let _ =
+      Js.Global.setTimeout(
+        () => {
+          let repos = RepoData.getRepos();
+          self.send(Loaded(repos));
+        },
+        900,
+      );
+    ();
+  },
   initialState: () => {data: None},
   reducer: (action, _state) =>
     switch (action) {
